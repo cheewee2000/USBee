@@ -1,17 +1,17 @@
 #include "TrinketHidCombo.h"
- 
+
 #define PIN_ENCODER_A 0
 #define PIN_ENCODER_B 2
 #define TRINKET_PINx  PINB
 #define PIN_ENCODER_SWITCH 1
- 
+
 static uint8_t enc_prev_pos   = 0;
 static uint8_t enc_flags      = 0;
 static char    sw_was_pressed = 0;
 static boolean fineControl = 1;
 static boolean fineSet = 0;
 static unsigned long pressTime = 0;
- 
+
 void setup()
 {
   // set pins as input with internal pull-up resistors enabled
@@ -19,15 +19,15 @@ void setup()
   pinMode(PIN_ENCODER_B, INPUT);
   digitalWrite(PIN_ENCODER_A, HIGH);
   digitalWrite(PIN_ENCODER_B, HIGH);
- 
+
   pinMode(PIN_ENCODER_SWITCH, INPUT);
   // the switch is active-high, not active-low
   // since it shares the pin with Trinket's built-in LED
   // the LED acts as a pull-down resistor
   digitalWrite(PIN_ENCODER_SWITCH, LOW);
- 
+
   TrinketHidCombo.begin(); // start the USB device engine and enumerate
- 
+
   // get an initial reading on the encoder pins
   if (digitalRead(PIN_ENCODER_A) == LOW) {
     enc_prev_pos |= (1 << 0);
@@ -36,11 +36,11 @@ void setup()
     enc_prev_pos |= (1 << 1);
   }
 }
- 
+
 void loop()
 {
   int8_t enc_action = 0; // 1 or -1 if moved, sign is direction
- 
+
   // note: for better performance, the code will now use
   // direct port access techniques
   // http://www.arduino.cc/en/Reference/PortManipulation
@@ -52,7 +52,7 @@ void loop()
   if (bit_is_clear(TRINKET_PINx, PIN_ENCODER_B)) {
     enc_cur_pos |= (1 << 1);
   }
- 
+
   // if any rotation at all
   if (enc_cur_pos != enc_prev_pos)
   {
@@ -66,7 +66,7 @@ void loop()
         enc_flags |= (1 << 1);
       }
     }
- 
+
     if (enc_cur_pos == 0x03)
     {
       // this is when the encoder is in the middle of a "step"
@@ -81,7 +81,7 @@ void loop()
       else if (enc_prev_pos == 0x01) {
         enc_flags |= (1 << 3);
       }
- 
+
       // check the first and last edge
       // or maybe one edge is missing, if missing then require the middle state
       // this will reject bounces and false movements
@@ -97,32 +97,33 @@ void loop()
       else if (bit_is_set(enc_flags, 3) && (bit_is_set(enc_flags, 1) || bit_is_set(enc_flags, 4))) {
         enc_action = -1;
       }
- 
       enc_flags = 0; // reset for next time
     }
   }
- 
+
   enc_prev_pos = enc_cur_pos;
- 
+
   if (enc_action > 0) {
     if (fineControl){
-      TrinketHidCombo.pressMMKeys(0, KEYCODE_ARROW_RIGHT);
-    } else {
+      TrinketHidCombo.pressKey(0, KEYCODE_ARROW_RIGHT);
+    } 
+    else {
       for (int i = 0; i < 5; i++){
-        TrinketHidCombo.pressMMKeys(0, KEYCODE_ARROW_RIGHT);
+        TrinketHidCombo.pressKey(0, KEYCODE_ARROW_RIGHT);
       }
     }
   }
   else if (enc_action < 0) {
     if (fineControl){
-      TrinketHidCombo.pressMMKeys(0, KEYCODE_ARROW_LEFT);
-    } else {
+      TrinketHidCombo.pressKey(0, KEYCODE_ARROW_LEFT);
+    } 
+    else {
       for (int i = 0; i < 5; i++){
-        TrinketHidCombo.pressMMKeys(0, KEYCODE_ARROW_LEFT);
+        TrinketHidCombo.pressKey(0, KEYCODE_ARROW_LEFT);
       }
     }
   }
- 
+
   // remember that the switch is active-high
   if (bit_is_set(TRINKET_PINx, PIN_ENCODER_SWITCH)) 
   {
@@ -131,17 +132,17 @@ void loop()
       pressTime = millis();
       delay(5); // debounce delay
     }
-    
+
     if (!fineSet && ((millis() - pressTime) > 1000)){
       fineControl = !fineControl;
       //TrinketHidCombo.pressMultimediaKey(MMKEY_VOL_UP);
       fineSet = true;
     }
-    
-    
-      
+
+
+
     sw_was_pressed = 1;
-    
+
   }
   else
   {
@@ -149,7 +150,8 @@ void loop()
     if (sw_was_pressed != 0) {
       if (fineSet){
         fineSet = false;
-      } else {
+      } 
+      else {
         TrinketHidCombo.pressMultimediaKey(MMKEY_MUTE);
       }
 
@@ -158,6 +160,7 @@ void loop()
     sw_was_pressed = 0;
 
   }
- 
+
   TrinketHidCombo.poll(); // check if USB needs anything done
 }
+

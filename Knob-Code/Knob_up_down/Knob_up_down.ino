@@ -106,19 +106,19 @@ void loop()
  
   if (enc_action > 0) {
     if (fineControl){
-      TrinketHidCombo.pressMMKeys(0, KEYCODE_ARROW_UP);
+      TrinketHidCombo.pressKey(0, KEYCODE_ARROW_UP);
     } else {
       for (int i = 0; i < 5; i++){
-        TrinketHidCombo.pressMMKeys(0, KEYCODE_ARROW_UP);
+        TrinketHidCombo.pressKey(0, KEYCODE_ARROW_UP);
       }
     }
   }
   else if (enc_action < 0) {
     if (fineControl){
-      TrinketHidCombo.pressMMKeys(0, KEYCODE_ARROW_DOWN);
+      TrinketHidCombo.pressKey(0, KEYCODE_ARROW_DOWN);
     } else {
       for (int i = 0; i < 5; i++){
-        TrinketHidCombo.pressMMKeys(0, KEYCODE_ARROW_DOWN);
+        TrinketHidCombo.pressKey(0, KEYCODE_ARROW_DOWN);
       }
     }
   }
