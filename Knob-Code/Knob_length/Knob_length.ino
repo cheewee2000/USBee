@@ -1,5 +1,16 @@
 
 #include "TrinketHidCombo.h"
+/*
+needs https://github.com/adafruit/Adafruit-Trinket-USB
+add unpress to TrinketHidCombo.cpp
+
+use adafruit trinket ide
+https://learn.adafruit.com/introducing-trinket/setting-up-with-arduino-ide
+
+
+*/
+
+
 
 #define PIN_ENCODER_A 0
 #define PIN_ENCODER_B 2
